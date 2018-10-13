@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-
 import { Table } from "reactstrap";
-
 import axios from "axios";
 
-// connect to server
-// emit user to server
-// update table
+import openSocket from "socket.io-client";
+
+const socket = openSocket("http://localhost:6600");
 
 class LiveVisitors extends Component {
   state = {
@@ -31,20 +29,29 @@ class LiveVisitors extends Component {
         country: geoplugin_countryName
       };
 
-      this.setState({
-        visitors: [visitor]
+      socket.emit("new_visitor", visitor);
+
+      socket.on("visitors", visitors => {
+        this.setState({
+          visitors: visitors
+        });
       });
     });
   }
+
+  getCountyFlag = countryCode =>
+    `https://www.countryflags.io/${countryCode}/flat/64.png`;
 
   renderTableBody = () => {
     const { visitors } = this.state;
     return visitors.map((v, index) => {
       return (
-        <tr>
+        <tr key={index}>
           <td>{index + 1}</td>
           <td>{v.ip}</td>
-          <td>{v.country}</td>
+          <td>
+            <img src={this.getCountyFlag(v.countryCode)} />
+          </td>
           <td>{v.city}</td>
           <td>{v.state}</td>
           <td>{v.country}</td>
