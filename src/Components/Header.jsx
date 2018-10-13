@@ -1,6 +1,15 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav } from "reactstrap";
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink
+} from "reactstrap";
 
 class Header extends Component {
   state = {
@@ -17,10 +26,23 @@ class Header extends Component {
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand href="/">Chat App</NavbarBrand>
+          <NavbarBrand tag={Link} to="/">
+            Chat App
+          </NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar />
+            <Nav className="ml" navbar>
+              <NavItem>
+                <NavLink tag={Link} to="/roomChat">
+                  Room Chat
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink tag={Link} to="/liveVisitors">
+                  Live Visitors
+                </NavLink>
+              </NavItem>
+            </Nav>
           </Collapse>
         </Navbar>
       </div>
