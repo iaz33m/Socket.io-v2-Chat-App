@@ -39,6 +39,20 @@ io.on("connection", function(socket) {
     emitOnlineUsers();
   });
 
+  socket.on("message", message => {
+    message.name = socket.user.name;
+    socket.broadcast.emit("message", message);
+  });
+
+  socket.on("typing", () => {
+    const name = socket.user.name;
+    socket.broadcast.emit("typing", `${name} is typing`);
+  });
+
+  socket.on("stopped_typing", () => {
+    socket.broadcast.emit("stopped_typing");
+  });
+
   socket.on("disconnect", function() {
     const { user } = socket;
 
