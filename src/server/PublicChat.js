@@ -10,8 +10,19 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
+const getOnlineUsers = () => {
+  let clients = io.sockets.clients().connected;
+  let sockets = Object.values(clients);
+  let users = sockets.map(s => s.user);
+  return users.filter(u => u != undefined);
+};
+
 io.on("connection", function(socket) {
   console.log("a user connected");
+
+  const emitOnlineUsers = () => {
+    socket.broadcast.emit("users", getOnlineUsers());
+  };
 
   socket.on("add_user", user => {
     socket.emit("server_message", {
@@ -25,6 +36,7 @@ io.on("connection", function(socket) {
     });
 
     socket.user = user;
+    emitOnlineUsers();
   });
 
   socket.on("disconnect", function() {
@@ -36,6 +48,8 @@ io.on("connection", function(socket) {
         message: `${user.name} just left chat`
       });
     }
+
+    emitOnlineUsers();
   });
 });
 
